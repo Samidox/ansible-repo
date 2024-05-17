@@ -1,3 +1,5 @@
-192.168.121.111
-192.168.121.115
-192.168.121.196
+[servers]
+worker-1 ansible_host=192.168.121.115 ansible_user=vagrant
+worker-2 ansible_host=192.168.121.111 ansible_user=vagrant
+ansible-master ansible_host=192.168.121.196 ansible_user=vagrant
+
