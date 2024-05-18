@@ -1,0 +1,23 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+  - name: update reposirory index
+    apt:
+      update_cache: yes
+  - name: remove package slack
+    apt:
+      name: slack
+      state: absent
+  - name: remove apache2
+    apt:
+      name: apache2
+      state: absent
+  - name: remove nginx
+    apt:
+      name: nginx
+      state: absent 
+  - name: update reposirory index
+    apt:
+      update_cache: yes
