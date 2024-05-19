@@ -1,20 +1,66 @@
 ---
-- hosts: servers
+
+# Update all the servers, before installing the packages
+- hosts: all
   become: true
   tasks:
-    - name: update repository index
-      apt:
-        update_cache: yes
-
-    - name: install apache2
-      apt:
-        name: apache2
-        state: present
-
-- hosts: rpm
-  become: true
-  tasks:
-    - name: install httpd
+    - name: Install updates on AlmaLinux
       ansible.builtin.yum:
+        name: '*'
+        state: latest
+        update_cache: yes
+      when: ansible_distribution == 'AlmaLinux'
+
+    - name: Install updates on Ubuntu
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: yes
+      when: ansible_distribution == 'Ubuntu'
+
+# Installing file server on debian
+- hosts: file-server-debian
+  become: true
+  tasks:
+    - name: installing file server samba on debian
+      tags: file-server, ubuntu, debian,samba
+      ansible.builtin.apt:
+        name:
+          - samba
+        state: latest
+
+- hosts: web-server-rpm
+  become: true
+  tasks:
+    - name: Install httpd and PHP
+      tags: httpd,php,almalinux,rpm
+      ansible.builtin.yum:
+        name:
+          - httpd
+          - php
+        state: latest
+
+    - name: Start and enable httpd service
+      ansible.builtin.systemd:
         name: httpd
-        state: present
+        state: started
+        enabled: yes
+
+    - name: Allow HTTP traffic on port 80
+      ansible.builtin.firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+
+    - name: Reload firewalld to apply changes
+      ansible.builtin.systemd:
+        name: firewalld
+        state: reloaded
+- hosts: db-server-debian
+  become: yes
+  tasks:
+    - name: Installing maria db server
+      tags: db,mariadb,ubuntu,debian
+      ansible.builtin.apt:
+        name:
+          - mariadb-server
+        state: latest

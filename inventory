@@ -1,8 +1,10 @@
-[servers]
+[file-server-debian]
 worker-1 ansible_host=192.168.121.224 ansible_user=vagrant
-worker-2 ansible_host=192.168.121.190 ansible_user=vagrant 
 
-[rpm]
+[db-server-debian]
+worker-2 ansible_host=192.168.121.240 ansible_user=vagrant 
+
+[web-server-rpm]
 lmalinux ansible_host=192.168.122.75 ansible_user=arouiss
 
 
