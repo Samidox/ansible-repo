@@ -55,6 +55,18 @@
       ansible.builtin.systemd:
         name: firewalld
         state: reloaded
+
+        
+    - name: copy defualt html file into httpd
+      tags: apache,httpd,copy
+      ansible.builtin.copy:
+        src: default_site.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: 0644
+
+
 - hosts: db-server-debian
   become: yes
   tasks:
