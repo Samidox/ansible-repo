@@ -25,7 +25,7 @@
     - name: create Jack user
       tags: allways, useradd
       ansible.builtin.user:
-        name: Jack
+        name: fatima
         groups: root
 
     - name: add sudoers file for Jack
@@ -40,6 +40,6 @@
     - name: add ssh-key for Jack
       tags: allways
       authorized_key:
-        user: Jack
+        user: fatima
         key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAoFh6idc+XhmviWnp1ejKvPvp9hglxwc/pqbDH1Amth asncible"
 
