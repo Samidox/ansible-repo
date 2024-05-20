@@ -7,4 +7,7 @@ worker-2 ansible_host=192.168.121.240 ansible_user=vagrant
 [web-server-rpm]
 lmalinux ansible_host=192.168.122.75 ansible_user=arouiss
 
+[workstations]
+workstation    ansible_host=192.168.122.207 ansible_user=arouiss
+
 
