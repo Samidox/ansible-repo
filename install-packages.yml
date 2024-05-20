@@ -1,6 +1,7 @@
 ---
 
-# Update all the servers, before installing the packages
+########################################################################
+################all work that done to all hosts ########################
 - hosts: all
   become: true
   tasks:
@@ -9,24 +10,31 @@
         name: '*'
         state: latest
         update_cache: yes
-      when: ansible_distribution == 'AlmaLinux'
+      changed_when: false
+      when: ansible_distribution == "'AlmaLinux', 'RedHat'"
 
     - name: Install updates on Ubuntu
       ansible.builtin.apt:
-        upgrade: dist
         update_cache: yes
+      changed_when: false
       when: ansible_distribution == 'Ubuntu'
+##################################################################
+################host: file-server Ubuntu  ########################
 
-# Installing file server on debian
 - hosts: file-server-debian
   become: true
   tasks:
-    - name: installing file server samba on debian
-      tags: file-server, ubuntu, debian,samba
+    - name: Installing file server samba on Debian
+      tags: file-server,ubuntu,debian,samba
       ansible.builtin.apt:
         name:
           - samba
         state: latest
+
+
+##################################################################
+################host: web server AlmaLinux ########################
+
 
 - hosts: web-server-rpm
   become: true
@@ -56,40 +64,59 @@
         name: firewalld
         state: reloaded
 
-
-    - name: copy defualt html file into httpd
+    - name: Copy default HTML file into httpd
       tags: apache,httpd,copy
       ansible.builtin.copy:
         src: default_site.html
         dest: /var/www/html/index.html
         owner: root
         group: root
-        mode: 0644
+        mode: '0644'
 
+    - name: change admin email address for admin
+      tags: lineinfile, email address, AlmaLinux
+      ansible.builtin.lineinfile:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: '^ServerAdmin'
+        line: ^ServerAdmin'arouiss@medrouiss.com
+        backup: true
+      register: httpd
+    - name: restart httpd
+      tags: httpd, restart httpd
+      ansible.builtin.service:
+        name: http
+        state: restarted
+      when: httpd.changed
 
+##################################################################
+################host: Maria db on ubuntu  ########################
 - hosts: db-server-debian
-  become: yes
+  become: true
   tasks:
-    - name: Installing maria db server
+    - name: Installing MariaDB server
       tags: db,mariadb,ubuntu,debian
       ansible.builtin.apt:
         name:
           - mariadb-server
         state: latest
 
+        
+
+##################################################################
+################host:   Terraform on RHEL ########################
 - hosts: workstations
   become: true
   tasks:
+    - name: Install unzip
+      ansible.builtin.package:
+        name: unzip
+        state: present
 
-  - name: install unzip
-    ansible.builtin.package:
-      name: unzip
-  
-  - name: install terraform
-    ansible.builtin.unarchive:
-      src: https://releases.hashicorp.com/terraform/1.8.3/terraform_1.8.3_linux_amd64.zip
-      dest: /usr/local/bin
-      remote_src: yes
-      mode: 0755
-      owner: root
-      group: root
+    - name: Install Terraform
+      ansible.builtin.unarchive:
+        src: https://releases.hashicorp.com/terraform/1.8.3/terraform_1.8.3_linux_amd64.zip
+        dest: /usr/local/bin
+        remote_src: yes
+        mode: '0755'
+        owner: root
+        group: root

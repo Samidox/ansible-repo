@@ -1,0 +1,45 @@
+---
+
+########################################################################
+################all work that done to all hosts ########################
+- hosts: all
+  become: true
+  tasks:
+    - name: Install updates on AlmaLinux
+      dnf:
+        update_only: yes
+        update_cache: yes
+      when: ansible_distribution == "'AlmaLinux', 'RedHat'"
+
+    - name: Install updates on Ubuntu
+      ansible.builtin.apt:
+        upgrade: yes
+        update_cache: yes
+      when: ansible_distribution == 'Ubuntu'
+
+
+- hosts: all
+  become: true
+  tasks:
+
+    - name: create Jack user
+      tags: allways, useradd
+      ansible.builtin.user:
+        name: Jack
+        groups: root
+
+    - name: add sudoers file for Jack
+      tags: allways
+      ansible.builtin.copy:
+        src: sudoers_Jack
+        dest: /etc/sudoers.d/Jack
+        owner: root
+        group: root
+        mode: 0440
+
+    - name: add ssh-key for Jack
+      tags: allways
+      authorized_key:
+        user: Jack
+        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAoFh6idc+XhmviWnp1ejKvPvp9hglxwc/pqbDH1Amth asncible"
+
