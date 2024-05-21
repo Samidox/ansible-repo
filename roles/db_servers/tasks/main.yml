@@ -1,0 +1,6 @@
+    - name: Installing MariaDB server
+      tags: db,mariadb,ubuntu,debian
+      ansible.builtin.apt:
+        name:
+          - mariadb-server
+        state: absent

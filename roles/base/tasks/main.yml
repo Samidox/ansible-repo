@@ -1,0 +1,21 @@
+    - name: create abdorouiss user
+      tags: allways, useradd
+      ansible.builtin.user:
+        name: abdorouiss
+        groups: root
+        state:  present
+
+    - name: add sudoers file for abdorouiss
+      tags: allways
+      ansible.builtin.copy:
+        src: sudoers_abdorouiss
+        dest: /etc/sudoers.d/abdorouiss
+        owner: root
+        group: root
+        mode: '0440'
+
+    - name: add ssh-key for abdorouiss
+      tags: allways
+      ansible.builtin.authorized_key:
+        user: abdorouiss
+        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAoFh6idc+XhmviWnp1ejKvPvp9hglxwc/pqbDH1Amth asncible"

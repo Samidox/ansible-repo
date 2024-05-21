@@ -1,0 +1,6 @@
+        - name: Installing file server samba on Debian
+          tags: file-server,ubuntu,debian,samba
+          ansible.builtin.apt:
+            name:
+              - samba
+            state: absent
