@@ -40,8 +40,6 @@
         line: ^ServerAdmin'arouiss@medrouiss.com
         backup: true
       register: httpd
-
-      
     - name: restart httpd
       tags: httpd, restart httpd
       ansible.builtin.service:
